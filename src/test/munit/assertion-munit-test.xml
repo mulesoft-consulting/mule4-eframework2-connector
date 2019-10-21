@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munitext="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns:eframework2="http://www.mulesoft.org/schema/mule/eframework2"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core      http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit     http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/eframework2 http://www.mulesoft.org/schema/mule/eframework2/current/mule-eframework2.xsd">
+
+	<munit:config name="assertionconfig" />
+	<eframework2:config name="eframework-config"
+		applicationId="unit-testing" applicationVersion="x.x.x" apiVersion="x.x.x" muleEnvironment="DEV" muleServer="UTX543"
+		businessEventsEmail="a@x.com" systemEventsEmail="a@x.com" notificationsEmail="a@x.com" alertsEmail="a@x.com"
+		errorsEmail="a@x.com" retrysEmail="a@x.com"
+	 />
+	<eframework2:config name="eframework-config-optional"
+		applicationId="unit-testing" applicationVersion="x.x.x" apiVersion="x.x.x" muleEnvironment="DEV" muleServer="UTX543"
+	 />
+
+</mule>

@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="Event Framework 2" prefix="eframework2"
+	doc:description="This module relies entirely in runtime provided components (no other Plugin dependencies)"
+
+	xmlns="http://www.mulesoft.org/schema/mule/module" 
+    xmlns:tns="http://www.mulesoft.org/schema/mule/eframework2"
+	xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/module http://www.mulesoft.org/schema/mule/module/current/mule-module.xsd
+           http://www.mulesoft.org/schema/mule/eframework2 http://www.mulesoft.org/schema/mule/eframework2/current/mule-eframework2.xsd
+           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+	<property tab="General" order="1" name="applicationId" type="string" password="false" use="REQUIRED" summary="vars.applicationId" doc:description="Application id" />
+	<property tab="General" order="2" name="applicationVersion" type="string" password="false" use="REQUIRED" summary="vars.applicationVersion" doc:description="Application version" />
+	<property tab="General" order="3" name="apiVersion" type="string" password="false" use="OPTIONAL" summary="vars.apiVersion" doc:description="API version" />
+	<property tab="Deployment Environment" order="1" name="muleEnvironment" type="string" password="false" use="REQUIRED" summary="vars.muleEnvironment" doc:description="Mule Environment (mule.env)" />	
+	<property tab="Deployment Environment" order="2" name="muleServer" type="string" password="false" use="REQUIRED" summary="vars.muleServer" doc:description="Mule Server (mule.server)" />	
+	<property tab="Contacts" order="1" name="businessEventsEmail" type="string" password="false" use="OPTIONAL" summary="vars.businessEventsEmail" doc:description="Business Events Email Address" />	
+	<property tab="Contacts" order="2" name="systemEventsEmail" type="string" password="false" use="OPTIONAL" summary="vars.systemEventsEmail" doc:description="System Events Email Address" />	
+	<property tab="Contacts" order="3" name="notificationsEmail" type="string" password="false" use="OPTIONAL" summary="vars.notificationsEmail" doc:description="Notifications Email Address" />	
+	<property tab="Contacts" order="4" name="alertsEmail" type="string" password="false" use="OPTIONAL" summary="vars.alertsEmail" doc:description="Alerts Email Address" />	
+	<property tab="Contacts" order="5" name="errorsEmail" type="string" password="false" use="OPTIONAL" summary="vars.errorsEmail" doc:description="Errors Email Address" />	
+	<property tab="Contacts" order="6" name="retrysEmail" type="string" password="false" use="OPTIONAL" summary="vars.retrysEmail" doc:description="Retrys Email Address" />	
+
+	<operation name="get-time-now" doc:description="Returns the time now property">
+		<body>
+            <mule:set-payload value='#[%dw 2.0
+output application/java
+var timenow = now()
+---
+{
+	epochTime : timenow as Number,
+	seconds: timenow.seconds,
+	minutes: timenow.minutes,
+	hour: timenow.hour,
+	day: timenow.day,
+	month: timenow.month,
+	year: timenow.year,
+	quarter: timenow.quarter,
+	dayOfWeek: timenow.dayOfWeek,
+	dayOfYear: timenow.dayOfYear,
+	offsetSeconds: timenow.offsetSeconds,
+	formattedDate: timenow as String {format: "y-MM-dd"},
+	formattedTime: timenow as String {format: "hh:m:s"}
+}]' doc:name="Set time now"/>
+		</body>
+		<output type="string" doc:description="time now" />
+	</operation>
+
+	<operation name="add-transaction-properties" doc:description="Returns updated transactionProperties">
+	    <parameters>
+			<parameter tab="General" order="1" name="transactionType" type="string"
+				use="REQUIRED" displayName="Transaction Type" summary="vars.transactionType"
+				doc:description="Type of event to pass to event handler." />
+			<parameter tab="General" order="2" name="transactionStatus" type="string"
+				use="REQUIRED" displayName="Transaction Status" summary="vars.transactionStatus"
+				doc:description="Status at the time of the event." />
+			<parameter tab="General" order="3" name="transactionMsg" type="string"
+				use="REQUIRED" displayName="Transaction Message" summary="vars.transactionMsg"
+				doc:description="Message to pass to the event handler." />
+			<parameter tab="General" order="4" name="transactionProperties"
+				use="REQUIRED" type="string"
+				displayName="Transaction properties" summary="vars.transactionProperties"
+				doc:description="transactionProperties passed to the event handler." />
+	    </parameters>
+		<body>
+			<tns:get-time-now target="eventTimestamp" targetValue="#[payload]" />
+            <mule:set-payload value='#[%dw 2.0
+output application/java
+---
+    {transactionType: vars.transactionType, transactionStatus: vars.transactionStatus, transactionMsg: vars.transactionMsg} ++ vars.transactionProperties ++ vars.eventTimestamp
+]' doc:name="Set time now"/>
+		</body>
+		<output type="string" doc:description="transactionProperties" />
+	</operation>
+
+	<operation name="add-event-properties" doc:description="Returns updated transactionProperties">
+	    <parameters>
+			<parameter tab="General" order="1" name="eventType" type="string"
+				use="REQUIRED" displayName="Event Type" summary="vars.eventType"
+				doc:description="Type of event to pass to event handler." />
+			<parameter tab="General" order="2" name="eventStatus" type="string"
+				use="REQUIRED" displayName="Event Status" summary="vars.eventStatus"
+				doc:description="Status at the time of the event." />
+			<parameter tab="General" order="3" name="eventMsg" type="string"
+				use="REQUIRED" displayName="Event Message" summary="vars.eventMsg"
+				doc:description="Message to pass to the event handler." />
+			<parameter tab="General" order="4" name="transactionProperties"
+				use="REQUIRED" type="string"
+				displayName="Transaction properties" summary="vars.transactionProperties"
+				doc:description="transactionProperties passed to the event handler." />
+	    </parameters>
+		<body>
+			<tns:get-time-now target="eventTimestamp" targetValue="#[payload]" />
+            <mule:set-payload value='#[%dw 2.0
+---
+    {eventType: vars.eventType, eventStatus: vars.eventStatus, eventMsg: vars.eventMsg} ++ vars.transactionProperties ++ vars.eventTimestamp
+]' doc:name="Set time now"/>
+		</body>
+		<output type="string" doc:description="transactionProperties" />
+	</operation>
+	
+	<operation name="business-event" doc:description="Generate a business event">
+		<parameters>
+			<parameter tab="General" order="1" name="eventType" type="string"
+				use="REQUIRED" displayName="Event Type" summary="vars.eventType"
+				doc:description="Type of event to pass to event handler." />
+			<parameter tab="General" order="2" name="eventStatus" type="string"
+				use="REQUIRED" displayName="Event Status" summary="vars.eventStatus"
+				doc:description="Status at the time of the event." />
+			<parameter tab="General" order="3" name="eventMsg" type="string"
+				use="REQUIRED" displayName="Event Message" summary="vars.eventMsg"
+				doc:description="Message to pass to the event handler." />
+			<parameter tab="General" order="4" name="transactionProperties"
+				defaultValue="#[vars.transactionProperties]" type="string"
+				displayName="Transaction properties" summary="vars.transactionProperties"
+				doc:description="transactionProperties passed to the event handler." />
+			<parameter tab="General" order="5" name="eventConfig" type="string"
+				defaultValue="{}" displayName="Event Configuration" summary="vars.eventConfig"
+				doc:description="Configuration data passed to the event handler." />
+			<parameter tab="General" order="6" name="payload" type="string"
+				defaultValue="{}" role="CONTENT" displayName="Payload" summary="vars.payload"
+				doc:description="payload passed to the event handler." />
+		</parameters>
+		<body>
+			<tns:add-event-properties eventType="#[vars.eventType]" eventStatus="#[vars.eventStatus]"
+			    eventMsg="#[vars.eventMsg]" transactionProperties="#[vars.transactionProperties]" target="transactionProperties" targetValue="#[payload]" />
+			<mule:flow-ref doc:name="eframework.businessEventFlow"
+				name="eframework.businessEventFlow" target="eframework.businessEventResult"
+				targetValue="#[payload]" />
+		</body>
+	</operation>
+
+	<operation name="system-event" doc:description="Generate a system event">
+		<parameters>
+			<parameter tab="General" order="1" name="eventType" type="string"
+				use="REQUIRED" displayName="Event Type" summary="vars.eventType"
+				doc:description="Type of event to pass to event handler." />
+			<parameter tab="General" order="2" name="eventStatus" type="string"
+				use="REQUIRED" displayName="Event Status" summary="vars.eventStatus"
+				doc:description="Status at the time of the event." />
+			<parameter tab="General" order="3" name="eventMsg" type="string"
+				use="REQUIRED" displayName="Event Message" summary="vars.eventMsg"
+				doc:description="Message to pass to the event handler." />
+			<parameter tab="General" order="4" name="transactionProperties"
+				defaultValue="#[vars.transactionProperties]" type="string"
+				displayName="Transaction properties" summary="vars.transactionProperties"
+				doc:description="transactionProperties passed to the event handler." />
+			<parameter tab="General" order="5" name="eventConfig" type="string"
+				defaultValue="{}" displayName="Event Configuration" summary="vars.eventConfig"
+				doc:description="Configuration data passed to the event handler." />
+			<parameter tab="General" order="6" name="payload" type="string"
+				defaultValue="{}" role="CONTENT" displayName="Payload" summary="vars.payload"
+				doc:description="payload passed to the event handler." />
+		</parameters>
+		<body>
+			<tns:add-event-properties eventType="#[vars.eventType]" eventStatus="#[vars.eventStatus]"
+			    eventMsg="#[vars.eventMsg]" transactionProperties="#[vars.transactionProperties]" target="transactionProperties" targetValue="#[payload]" />
+			<mule:flow-ref doc:name="eframework.systemEventFlow"
+				name="eframework.systemEventFlow" target="eframework.systemEventResult"
+				targetValue="#[payload]" />
+		</body>
+	</operation>
+
+	<operation name="progress" doc:description="Generate a progress event">
+		<parameters>
+			<parameter tab="General" order="1" name="stage" type="string"
+				use="REQUIRED" example="MILESTONE" displayName="Progress Stage" summary="vars.stage"
+				doc:description="Stage of execution at the time of event." />
+			<parameter tab="General" order="2" name="transactionStatus" type="string"
+				defaultValue="SUCCESS" displayName="Transaction Status" summary="vars.transactionStatus"
+				doc:description="Status at the time of the event." />
+			<parameter tab="General" order="3" name="detailText" type="string"
+				use="REQUIRED" displayName="Detail text" summary="vars.detailText"
+				doc:description="Details of progress to pass to the event handler." />
+			<parameter tab="General" order="4" name="recordDescriptor"
+				type="string" use="REQUIRED" displayName="Record Descriptor"
+				summary="vars.recordDescriptor"
+				doc:description="-optional- Description of record to pass to the event handler." />
+			<parameter tab="General" order="5" name="transactionProperties"
+				defaultValue="#[vars.transactionProperties]" type="string"
+				displayName="Transaction properties" summary="vars.transactionProperties"
+				doc:description="transactionProperties passed to the event handler." />
+			<parameter tab="General" order="6" name="eventConfig" type="string"
+				defaultValue="{}" displayName="Event Configuration" summary="vars.eventConfig"
+				doc:description="Configuration data passed to the event handler." />
+			<parameter tab="General" order="7" name="payload" type="string"
+				defaultValue="{}" role="CONTENT" displayName="Payload" summary="vars.payload"
+				doc:description="payload passed to the event handler." />
+		</parameters>
+		<body>
+			<tns:add-transaction-properties transactionType="#[vars.stage]" transactionStatus="#[vars.transactionStatus]"
+			    transactionMsg="#[vars.transactionMsg]" transactionProperties="#[vars.transactionProperties]" target="transactionProperties" targetValue="#[payload]" />
+			    
+			<mule:set-variable value="#[%dw 2.0
+output text/plain
+fun enrich(val) = '&quot;' ++ val ++ '&quot;'
+---
+'Progress ' ++ vars.detailText ++ ' {' ++ (vars.transactionProperties mapObject {
+    ('$$':enrich($$) ++ ':' ++ enrich($)) if (!isEmpty($))
+} pluck($) joinBy ',')
+++ '}']" doc:name="transactionMsg" variableName="transactionMsg"/>
+
+			<mule:flow-ref doc:name="eframework.progressFlow" name="eframework.progressFlow"
+				target="eframework.progressFlowResult" targetValue="#[payload]" />
+		</body>
+	</operation>
+
+	<operation name="send-audit-event" doc:description="Generate an audit event">
+		<parameters>
+			<parameter tab="General" order="1" name="transactionType" type="string"
+				use="REQUIRED" displayName="Transaction Type" summary="vars.transactionType"
+				doc:description="Type of event to pass to event handler." />
+			<parameter tab="General" order="2" name="transactionStatus" type="string"
+				use="REQUIRED" displayName="Transaction Status" summary="vars.transactionStatus"
+				doc:description="Status at the time of the event." />
+			<parameter tab="General" order="3" name="transactionMsg" type="string"
+				defaultValue="AUDIT: " displayName="Transaction Message" summary="vars.transactionMsg"
+				doc:description="Message to pass to the event handler." />
+			<parameter tab="General" order="4" name="transactionProperties"
+				defaultValue="#[vars.transactionProperties]" type="string"
+				displayName="Transaction properties" summary="vars.transactionProperties"
+				doc:description="transactionProperties passed to the event handler." />
+			<parameter tab="General" order="5" name="eventConfig" type="string"
+				defaultValue="{}" displayName="Event Configuration" summary="vars.eventConfig"
+				doc:description="Configuration data passed to the event handler." />
+			<parameter tab="General" order="6" name="payload" type="string"
+				defaultValue="{}" role="CONTENT" displayName="Payload" summary="vars.payload"
+				doc:description="payload passed to the event handler." />
+		</parameters>
+		<body>
+			<tns:add-transaction-properties transactionType="#[vars.transactionType]" transactionStatus="#[vars.transactionStatus]"
+			    transactionMsg="#[vars.transactionMsg]" transactionProperties="#[vars.transactionProperties]" target="transactionProperties" targetValue="#[payload]" />
+			<mule:flow-ref doc:name="eframework.auditLogFlow" name="eframework.auditLogFlow"
+				target="eframework.auditLogFlowResult" targetValue="#[payload]" />
+		</body>
+	</operation>
+
+	<operation name="send-notification-event" doc:description="Generate an notification event">
+		<parameters>
+			<parameter tab="General" order="1" name="transactionType" type="string"
+				use="REQUIRED" displayName="Transaction Type" summary="vars.transactionType"
+				doc:description="Type of event to pass to event handler." />
+			<parameter tab="General" order="2" name="transactionStatus" type="string"
+				use="REQUIRED" displayName="Transaction Status" summary="vars.transactionStatus"
+				doc:description="Status at the time of the event." />
+			<parameter tab="General" order="3" name="transactionMsg" type="string"
+				defaultValue="NOTIFICATION: " displayName="Transaction Message" summary="vars.transactionMsg"
+				doc:description="Message to pass to the event handler." />
+			<parameter tab="General" order="4" name="transactionProperties"
+				defaultValue="#[vars.transactionProperties]" type="string"
+				displayName="Transaction properties" summary="vars.transactionProperties"
+				doc:description="transactionProperties passed to the event handler." />
+			<parameter tab="General" order="5" name="eventConfig" type="string"
+				defaultValue="{}" displayName="Event Configuration" summary="vars.eventConfig"
+				doc:description="Configuration data passed to the event handler." />
+			<parameter tab="General" order="6" name="payload" type="string"
+				defaultValue="{}" role="CONTENT" displayName="Payload" summary="vars.payload"
+				doc:description="payload passed to the event handler." />
+		</parameters>
+		<body>
+			<tns:add-transaction-properties transactionType="#[vars.transactionType]" transactionStatus="#[vars.transactionStatus]"
+			    transactionMsg="#[vars.transactionMsg]" transactionProperties="#[vars.transactionProperties]" target="transactionProperties" targetValue="#[payload]" />
+			<mule:flow-ref doc:name="eframework.notificationFlow"
+				name="eframework.notificationFlow" target="eframework.notificationFlowResult"
+				targetValue="#[payload]" />
+		</body>
+	</operation>
+
+	<operation name="send-error-event" doc:description="Generate an error event">
+		<parameters>
+			<parameter tab="General" order="1" name="transactionType" type="string"
+				use="REQUIRED" displayName="Transaction Type" summary="vars.transactionType"
+				doc:description="Type of event to pass to event handler." />
+			<parameter tab="General" order="2" name="transactionStatus" type="string"
+				use="REQUIRED" displayName="Transaction Status" summary="vars.transactionStatus"
+				doc:description="Status at the time of the event." />
+			<parameter tab="General" order="3" name="transactionMsg" type="string"
+				defaultValue="ERROR: " displayName="Transaction Message" summary="vars.transactionMsg"
+				doc:description="Message to pass to the event handler." />
+			<parameter tab="General" order="4" name="transactionProperties"
+				defaultValue="#[vars.transactionProperties]" type="string"
+				displayName="Transaction properties" summary="vars.transactionProperties"
+				doc:description="transactionProperties passed to the event handler." />
+			<parameter tab="General" order="5" name="eventConfig" type="string"
+				defaultValue="{}" displayName="Event Configuration" summary="vars.eventConfig"
+				doc:description="Configuration data passed to the event handler." />
+			<parameter tab="General" order="6" name="payload" type="string"
+				defaultValue="{}" role="CONTENT" displayName="Payload" summary="vars.payload"
+				doc:description="payload passed to the event handler." />
+		</parameters>
+		<body>
+			<tns:add-transaction-properties transactionType="#[vars.transactionType]" transactionStatus="#[vars.transactionStatus]"
+			    transactionMsg="#[vars.transactionMsg]" transactionProperties="#[vars.transactionProperties]" target="transactionProperties" targetValue="#[payload]" />
+			<mule:flow-ref doc:name="eframework.errorTransactionFlow"
+				name="eframework.errorTransactionFlow" target="eframework.errorTransactionFlowResult"
+				targetValue="#[payload]" />
+		</body>
+	</operation>
+
+	<operation name="send-retry-event" doc:description="Generate an retry event">
+		<parameters>
+			<parameter tab="General" order="1" name="transactionType" type="string"
+				use="REQUIRED" displayName="Transaction Type" summary="vars.transactionType"
+				doc:description="Type of event to pass to event handler." />
+			<parameter tab="General" order="2" name="transactionStatus" type="string"
+				use="REQUIRED" displayName="Transaction Status" summary="vars.transactionStatus"
+				doc:description="Status at the time of the event." />
+			<parameter tab="General" order="3" name="transactionMsg" type="string"
+				defaultValue="RETRY: " displayName="Transaction Message" summary="vars.transactionMsg"
+				doc:description="Message to pass to the event handler." />
+			<parameter tab="General" order="4" name="transactionProperties"
+				defaultValue="#[vars.transactionProperties]" type="string"
+				displayName="Transaction properties" summary="vars.transactionProperties"
+				doc:description="transactionProperties passed to the event handler." />
+			<parameter tab="General" order="5" name="eventConfig" type="string"
+				defaultValue="{}" displayName="Event Configuration" summary="vars.eventConfig"
+				doc:description="Configuration data passed to the event handler." />
+			<parameter tab="General" order="6" name="payload" type="string"
+				defaultValue="{}" role="CONTENT" displayName="Payload" summary="vars.payload"
+				doc:description="payload passed to the event handler." />
+		</parameters>
+		<body>
+			<tns:add-transaction-properties transactionType="#[vars.transactionType]" transactionStatus="#[vars.transactionStatus]"
+			    transactionMsg="#[vars.transactionMsg]" transactionProperties="#[vars.transactionProperties]" target="transactionProperties" targetValue="#[payload]" />
+			<mule:flow-ref doc:name="eframework.retryTransactionFlow"
+				name="eframework.retryTransactionFlow" target="eframework.retryTransactionFlowResult"
+				targetValue="#[payload]" />
+		</body>
+	</operation>
+
+	<operation name="log-request-payload" doc:description="Log the request Payload">
+		<parameters>
+			<parameter tab="General" order="1" name="transactionType" type="string"
+				use="REQUIRED" displayName="Transaction Type" summary="vars.transactionType"
+				doc:description="Type of event to pass to event handler." />
+			<parameter tab="General" order="2" name="transactionStatus" type="string"
+				use="REQUIRED" displayName="Transaction Status" summary="vars.transactionStatus"
+				doc:description="Status at the time of the event." />
+			<parameter tab="General" order="3" name="transactionMsg" type="string"
+				defaultValue="REQUEST payload: " displayName="Transaction Message"
+				summary="vars.transactionMsg" doc:description="Message to pass to the event handler." />
+			<parameter tab="General" order="4" name="transactionProperties"
+				defaultValue="#[vars.transactionProperties]" type="string"
+				displayName="Transaction properties" summary="vars.transactionProperties"
+				doc:description="transactionProperties passed to the event handler." />
+			<parameter tab="General" order="5" name="eventConfig" type="string"
+				defaultValue="{}" displayName="Event Configuration" summary="vars.eventConfig"
+				doc:description="Configuration data passed to the event handler." />
+			<parameter tab="General" order="6" name="payload" type="string"
+				role="PRIMARY" displayName="Payload" summary="vars.payload"
+				doc:description="payload passed to the event handler." />
+		</parameters>
+		<body>
+			<tns:add-transaction-properties transactionType="#[vars.transactionType]" transactionStatus="#[vars.transactionStatus]"
+			    transactionMsg="#[vars.transactionMsg]" transactionProperties="#[vars.transactionProperties]" target="transactionProperties" targetValue="#[payload]" />
+			<mule:flow-ref doc:name="eframework.requestPayloadLogFlow"
+				name="eframework.requestPayloadLogFlow" target="eframework.requestPayloadLogFlowResult"
+				targetValue="#[payload]" />
+		</body>
+	</operation>
+
+	<operation name="log-response-payload" doc:description="Log the response Payload">
+		<parameters>
+			<parameter tab="General" order="1" name="transactionType" type="string"
+				use="REQUIRED" displayName="Transaction Type" summary="vars.transactionType"
+				doc:description="Type of event to pass to event handler." />
+			<parameter tab="General" order="2" name="transactionStatus" type="string"
+				use="REQUIRED" displayName="Transaction Status" summary="vars.transactionStatus"
+				doc:description="Status at the time of the event." />
+			<parameter tab="General" order="3" name="transactionMsg" type="string"
+				defaultValue="RESPONSE payload: " displayName="Transaction Message"
+				summary="vars.transactionMsg" doc:description="Message to pass to the event handler." />
+			<parameter tab="General" order="4" name="transactionProperties"
+				defaultValue="#[vars.transactionProperties]" type="string"
+				displayName="Transaction properties" summary="vars.transactionProperties"
+				doc:description="transactionProperties passed to the event handler." />
+			<parameter tab="General" order="5" name="eventConfig" type="string"
+				defaultValue="{}" displayName="Event Configuration" summary="vars.eventConfig"
+				doc:description="Configuration data passed to the event handler." />
+			<parameter tab="General" order="6" name="payload" type="string"
+				role="PRIMARY" displayName="Payload" summary="vars.payload"
+				doc:description="payload passed to the event handler." />
+		</parameters>
+		<body>
+			<tns:add-transaction-properties transactionType="#[vars.transactionType]" transactionStatus="#[vars.transactionStatus]"
+			    transactionMsg="#[vars.transactionMsg]" transactionProperties="#[vars.transactionProperties]" target="transactionProperties" targetValue="#[payload]" />
+			<mule:flow-ref doc:name="eframework.responsePayloadLogFlow"
+				name="eframework.responsePayloadLogFlow" target="eframework.responsePayloadLogFlowResult"
+				targetValue="#[payload]" />
+		</body>
+	</operation>
+
+</module>
