@@ -2,9 +2,9 @@
 
 The Mule 4 eFramework2 extension provides an easy way to invoke standardized workflows that process different event type.  The flows could be invoked directly by the Mule application, but by using the eFramework extension, the invocation of the event is separated from the implementation of the event logic. This makes it easier to use different standardized workflow logic in different Mule applications, while using a standard coding method for indicating an event has occurred.
 
-This is the replacement for the deprecated mule4-eframework-connector.
+This is the replacement for the deprecated mule4-eframework-connector. See a summary of the differences at the end of this README.
 
-This is a summary of the operations, the eFramework document contains more detailed information. 
+There is an EventFramework.docx containing more detailed information. 
 
 ## transactionProperties ##
 eFramework is intended to work with a logging framework (such as Minimal Logging) 
@@ -98,8 +98,11 @@ Add this dependency to your application's pom.xml
 			<classifier>mule-plugin</classifier>
 		</dependency>
 ```
+## Example Event Handler XML
 
-### Changes from eFramework version 1.x.x
+An example of setting up logging only event handlers is provided in the file **eframework.logging-only.xml**
+
+# Changes from eFramework version 1.x.x
 
 * All parameters are passed to the event handler as flow variables.
 * The attributes from version 1.x.x have the same names, but are vars instead of attributes.

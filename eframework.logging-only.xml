@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:min-log="http://www.mulesoft.org/schema/mule/min-log" xmlns:eframework="http://www.mulesoft.org/schema/mule/eframework"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/eframework http://www.mulesoft.org/schema/mule/eframework/current/mule-eframework.xsd
+http://www.mulesoft.org/schema/mule/min-log http://www.mulesoft.org/schema/mule/min-log/current/mule-min-log.xsd">
+
+	<flow name="eframework.progressFlow">
+		<logger level="INFO" doc:name="Logger" doc:id="38dd6cdd-e633-4696-9297-817de13f4249" message='#["eframework.progressFlow: " ++ vars.transactionMsg]'/>
+	</flow>
+	
+	<flow name="eframework.businessEventFlow">
+		<min-log:info doc:name="Info" msg='#["eframework.businessEventFlow: " ++ vars.eventMsg]' transactionProperties="#[vars.transactionProperties]" doc:id="f5f114b6-481b-4e8c-84d1-b1bc216cf133"/>
+	</flow>
+
+	<flow name="eframework.systemEventFlow">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.systemEventFlow: &quot; ++ vars.eventMsg]" />
+	</flow>
+
+	<flow name="eframework.notificationFlow">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.notificationFlow &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+	<flow name="eframework.errorTransactionFlow">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.errorTransactionFlow &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+	<flow name="eframework.retryTransactionFlow">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.retryTransactionFlow &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+	<flow name="eframework.auditLogFlow">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.auditLogFlow &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+	<flow name="eframework.responsePayloadLogFlow">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.responsePayloadLogFlow &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+	<flow name="eframework.requestPayloadLogFlow">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.requestPayloadLogFlow &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+	<flow name="eframework.circuitbreaker-check-breaker">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.circuitbreaker-check-breaker &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+	<flow name="eframework.circuitbreaker-trip">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.circuitbreaker-trip &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+	<flow name="eframework.circuitbreaker-reset">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.circuitbreaker-reset &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+	<flow name="eframework.circuitbreaker-auto-check-breaker">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.circuitbreaker-auto-check-breaker &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+	<flow name="eframework.circuitbreaker-auto-trip">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.circuitbreaker-auto-trip &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+	<flow name="eframework.circuitbreaker-auto-reset">
+		<logger level="INFO" doc:name="Logger" message="#[&quot;eframework.circuitbreaker-auto-reset &quot; ++ vars.'transactionMsg']" />
+	</flow>
+
+</mule>

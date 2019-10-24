@@ -12,10 +12,10 @@
            http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
 	<property tab="General" order="1" name="applicationId" type="string" password="false" use="REQUIRED" summary="vars.applicationId" doc:description="Application id" />
-	<property tab="General" order="2" name="applicationVersion" type="string" password="false" use="REQUIRED" summary="vars.applicationVersion" doc:description="Application version" />
-	<property tab="General" order="3" name="apiVersion" type="string" password="false" use="OPTIONAL" summary="vars.apiVersion" doc:description="API version" />
-	<property tab="Deployment Environment" order="1" name="muleEnvironment" type="string" password="false" use="REQUIRED" summary="vars.muleEnvironment" doc:description="Mule Environment (mule.env)" />	
-	<property tab="Deployment Environment" order="2" name="muleServer" type="string" password="false" use="REQUIRED" summary="vars.muleServer" doc:description="Mule Server (mule.server)" />	
+	<property tab="General" order="2" name="applicationVersion" type="string" password="false" use="OPTIONAL" example="project.version" summary="vars.applicationVersion" doc:description="Application version" />
+	<property tab="General" order="3" name="apiVersion" type="string" password="false" use="OPTIONAL" example="api.version" summary="vars.apiVersion" doc:description="API version" />
+	<property tab="Deployment Environment" order="1" name="muleEnvironment" type="string" password="false" use="OPTIONAL" example="mule.env" summary="vars.muleEnvironment" doc:description="Mule Environment (mule.env)" />	
+	<property tab="Deployment Environment" order="2" name="muleServer" type="string" password="false" use="OPTIONAL" example="mule.server" summary="vars.muleServer" doc:description="Mule Server (mule.server)" />	
 	<property tab="Contacts" order="1" name="businessEventsEmail" type="string" password="false" use="OPTIONAL" summary="vars.businessEventsEmail" doc:description="Business Events Email Address" />	
 	<property tab="Contacts" order="2" name="systemEventsEmail" type="string" password="false" use="OPTIONAL" summary="vars.systemEventsEmail" doc:description="System Events Email Address" />	
 	<property tab="Contacts" order="3" name="notificationsEmail" type="string" password="false" use="OPTIONAL" summary="vars.notificationsEmail" doc:description="Notifications Email Address" />	
